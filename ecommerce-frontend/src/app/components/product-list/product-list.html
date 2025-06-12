@@ -1,0 +1,70 @@
+<div class="product-list-container">
+  <div class="filters-section">
+    <div class="search-filters">
+      <input 
+        type="text" 
+        placeholder="Search products..." 
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch()"
+        class="search-input">
+      
+      <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()" class="category-select">
+        <option value="">All Categories</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Home & Kitchen">Home & Kitchen</option>
+        <option value="Sports & Outdoors">Sports & Outdoors</option>
+        <option value="Clothing">Clothing</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="products-grid" *ngIf="products.length > 0; else noProducts">
+    <div class="product-card" *ngFor="let product of products">
+      <div class="product-image">
+        <img [src]="product.imageUrl || '/assets/placeholder-product.jpg'" 
+             [alt]="product.name"
+             (error)="onImageError($event)">
+      </div>
+      
+      <div class="product-info">
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="product-description">{{ product.description | slice:0:100 }}...</p>
+        <div class="product-price">${{ product.price | number:'1.2-2' }}</div>
+        
+        <div class="product-actions">
+          <button 
+            class="btn btn-primary"
+            (click)="viewProduct(product.id)">
+            View Details
+          </button>
+          
+          <button 
+            class="btn btn-secondary"
+            (click)="addToCart(product)"
+            [disabled]="product.stockQuantity === 0">
+            <span *ngIf="product.stockQuantity > 0">Add to Cart</span>
+            <span *ngIf="product.stockQuantity === 0">Out of Stock</span>
+          </button>
+        </div>
+        
+        <div class="stock-info">
+          <span class="stock-count" [class.low-stock]="product.stockQuantity < 10">
+            {{ product.stockQuantity }} in stock
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noProducts>
+    <div class="no-products">
+      <h3>No products found</h3>
+      <p>Try adjusting your search criteria or browse all categories.</p>
+    </div>
+  </ng-template>
+
+  <div class="loading" *ngIf="isLoading">
+    <p>Loading products...</p>
+  </div>
+</div>
+

@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ecommerce-config
+data:
+  backend-url: "http://ecommerce-backend-service:5000"
+  database-url: "postgres://ecommerce:ecommerce123@postgres-service:5432/ecommercedb"
+  jwt-secret: "YourSuperSecretKeyThatIsAtLeast32CharactersLong!"
+  environment: "production"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ecommerce
+  labels:
+    name: ecommerce
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: ecommerce-quota
+  namespace: ecommerce
+spec:
+  hard:
+    requests.cpu: "2"
+    requests.memory: 4Gi
+    limits.cpu: "4"
+    limits.memory: 8Gi
+    persistentvolumeclaims: "10"
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ecommerce-network-policy
+  namespace: ecommerce
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: ecommerce-frontend
+    - podSelector:
+        matchLabels:
+          app: ecommerce-backend
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: ecommerce-backend
+  - to:
+    - podSelector:
+        matchLabels:
+          app: postgres
+

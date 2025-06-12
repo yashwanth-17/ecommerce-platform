@@ -1,0 +1,43 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      <a routerLink="/" class="brand-link">
+        <h2>E-Commerce Store</h2>
+      </a>
+    </div>
+    
+    <div class="navbar-menu">
+      <div class="navbar-search">
+        <input 
+          type="text" 
+          placeholder="Search products..." 
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+          class="search-input">
+        <button (click)="onSearch()" class="search-button">
+          <i class="search-icon">🔍</i>
+        </button>
+      </div>
+      
+      <div class="navbar-actions">
+        <a routerLink="/cart" class="cart-link">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-count" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+        </a>
+        
+        <div class="user-menu" *ngIf="currentUser; else loginMenu">
+          <span class="user-name">Hello, {{ currentUser.firstName }}!</span>
+          <button (click)="logout()" class="logout-button">Logout</button>
+        </div>
+        
+        <ng-template #loginMenu>
+          <div class="auth-links">
+            <a routerLink="/login" class="auth-link">Login</a>
+            <a routerLink="/register" class="auth-link">Register</a>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</nav>
+
